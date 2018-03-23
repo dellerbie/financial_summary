@@ -5,6 +5,14 @@ class FinancialSummary
     def one_day(user:, currency:)
       new(user: user, currency: currency, since: Time.current.beginning_of_day)
     end
+
+    def seven_days(user:, currency:)
+      new(user: user, currency: currency, since: 1.week.ago)
+    end
+
+    def lifetime(user:, currency:)
+      new(user: user, currency: currency, since: nil)
+    end
   end
 
   def initialize(user:, currency:, since:)

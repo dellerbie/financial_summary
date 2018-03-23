@@ -19,8 +19,6 @@ describe FinancialSummary do
   end
 
   it 'summarizes over seven days' do
-    pending('Not implemented yet')
-
     user = create(:user)
 
     Timecop.freeze(5.days.ago) do
@@ -38,8 +36,6 @@ describe FinancialSummary do
   end
 
   it 'summarizes over lifetime' do
-    pending('Not implemented yet')
-
     user = create(:user)
 
     Timecop.freeze(30.days.ago) do
