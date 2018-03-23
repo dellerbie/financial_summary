@@ -9,6 +9,8 @@ class Transaction < ApplicationRecord
   after_save :make_immutable
   after_find :make_immutable
 
+  scope :since, ->(time) { where('created_at >= ?', time) }
+
   private
 
   def must_be_greater_than_zero
