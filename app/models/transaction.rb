@@ -10,6 +10,7 @@ class Transaction < ApplicationRecord
   after_find :make_immutable
 
   scope :since, ->(time) { where('created_at >= ?', time) }
+  scope :category, ->(category) { where(category: category) }
 
   private
 

@@ -2,11 +2,9 @@ require 'rails_helper'
 
 describe FinancialSummary do
   it 'summarizes over one day' do
-    pending('Not implemented yet')
-
     user = create(:user)
 
-    Timecop.freeze(Time.now) do
+    Timecop.freeze(Time.current) do
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(2.12, :usd))
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(10, :usd))
     end
