@@ -11,6 +11,7 @@ class Transaction < ApplicationRecord
 
   scope :since, ->(time) { where('created_at >= ?', time) }
   scope :category, ->(category) { where(category: category) }
+  scope :currency, ->(currency) { where(amount_currency: currency.to_s.upcase) }
 
   private
 

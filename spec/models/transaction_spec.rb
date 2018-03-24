@@ -54,4 +54,28 @@ describe Transaction do
       end
     end
   end
+
+  describe 'currency' do
+    it 'only returns transactions for the given currency' do
+      usd_trans = create(:transaction, amount: Money.from_amount(1, :usd))
+      eur_trans = create(:transaction, amount: Money.from_amount(1, :eur))
+
+      transactions = Transaction.currency(:eur)
+
+      expect(transactions.count).to eq(1)
+      expect(transactions.first.amount_currency).to eq('EUR')
+    end
+
+    it 'handles string or symbol parameters' do
+      usd_trans = create(:transaction, amount: Money.from_amount(1, :usd))
+      eur_trans = create(:transaction, amount: Money.from_amount(1, :eur))
+
+      [:eur, 'eur', :EUR, 'EUR'].each do |currency|
+        transactions = Transaction.currency(currency)
+
+        expect(transactions.count).to eq(1)
+        expect(transactions.first.amount_currency).to eq('EUR')
+      end
+    end
+  end
 end

@@ -27,17 +27,13 @@ class FinancialSummary
 
   def amount(category)
     amount = transactions_for(category: category).sum(:amount_cents)
-    Money.new(amount, currency_str)
+    Money.new(amount, currency.to_s.upcase)
   end
 
   private
 
-  def currency_str
-    currency.to_s.upcase
-  end
-
   def transactions_for(category:)
-    category_transactions = user.transactions.category(category)
+    category_transactions = user.transactions.category(category).currency(currency)
 
     return category_transactions unless since
     return category_transactions.since(since)

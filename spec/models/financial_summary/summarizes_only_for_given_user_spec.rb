@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe FinancialSummary do
-  it 'summarizes only for the user given' do
+  it 'summarizes only for the given user' do
     derrick = create(:user)
     kim = create(:user)
 
