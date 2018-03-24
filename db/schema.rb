@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20180324152429) do
     t.string "category", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id", "category", nil], name: "index_transactions_on_user_id_and_category_and_currency"
+    t.index ["user_id", "category", "amount_currency"], name: "index_transactions_on_user_id_and_category_and_amount_currency"
   end
 
   create_table "users", force: :cascade do |t|
