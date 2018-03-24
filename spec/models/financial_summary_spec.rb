@@ -1,24 +1,27 @@
 require 'rails_helper'
 
 describe FinancialSummary do
-  def create_transactions_from(user:, timeframe:)
-    Timecop.freeze(timeframe.end) do
+  def create_user_with_transactions_on(time_in:, time_out:)
+    user = create(:user)
+
+    Timecop.freeze(time_in) do
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(2.12, :usd))
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(10, :usd))
       create(:transaction, user: user, category: :withdraw, amount: Money.from_amount(0.12, :usd))
       create(:transaction, user: user, category: :refund, amount: Money.from_amount(5, :usd))
     end
 
-    Timecop.freeze(timeframe.begin) do
+    Timecop.freeze(time_out) do
       create(:transaction, user: user, category: :deposit)
       create(:transaction, user: user, category: :refund)
       create(:transaction, user: user, category: :withdraw)
     end
+
+    user
   end
 
   it 'summarizes over one day' do
-    user = create(:user)
-    create_transactions_from(user: user, timeframe: 2.days.ago..Time.current)
+    user = create_user_with_transactions_on(time_in: Time.current, time_out: 2.days.ago)
 
     subject = FinancialSummary.one_day(user: user, currency: :usd)
 
@@ -31,8 +34,7 @@ describe FinancialSummary do
   end
 
   it 'summarizes over seven days' do
-    user = create(:user)
-    create_transactions_from(user: user, timeframe: 8.days.ago..5.days.ago)
+    user = create_user_with_transactions_on(time_in: 5.days.ago, time_out: 8.days.ago)
 
     subject = FinancialSummary.seven_days(user: user, currency: :usd)
 
@@ -45,8 +47,7 @@ describe FinancialSummary do
   end
 
   it 'summarizes over lifetime' do
-    user = create(:user)
-    create_transactions_from(user: user, timeframe: 30.days.ago..8.days.ago)
+    user = create_user_with_transactions_on(time_in: 8.days.ago, time_out: 30.days.ago)
 
     subject = FinancialSummary.lifetime(user: user, currency: :usd)
 
