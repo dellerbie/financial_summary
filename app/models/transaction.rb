@@ -9,6 +9,10 @@ class Transaction < ApplicationRecord
   after_save :make_immutable
   after_find :make_immutable
 
+  scope :since, ->(time) { where('created_at >= ?', time) }
+  scope :category, ->(category) { where(category: category) }
+  scope :currency, ->(currency) { where(amount_currency: currency.to_s.upcase) }
+
   private
 
   def must_be_greater_than_zero

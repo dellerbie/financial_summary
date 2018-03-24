@@ -26,4 +26,56 @@ describe Transaction do
     subject.amount = Money.from_amount(0.01, :usd)
     expect(subject.valid?).to eq(true)
   end
+
+  describe 'since' do
+    context 'one day' do
+      it 'returns all transactions for the current day' do
+        t1 = Timecop.freeze(Time.current) { create(:transaction) }
+        t2 = Timecop.freeze(Time.current.beginning_of_day) { create(:transaction) }
+        t3 = Timecop.freeze(1.day.ago) { create(:transaction) }
+
+        transactions = Transaction.since(Time.current.beginning_of_day).all
+
+        expect(transactions.length).to eq(2)
+        expect(transactions).to include(t1, t2)
+      end
+    end
+
+    context 'one week' do
+      it 'returns transactions for the past week' do
+        t1 = Timecop.freeze(Time.current) { create(:transaction) }
+        t2 = Timecop.freeze(1.week.ago + 5.minutes) { create(:transaction) }
+        t3 = Timecop.freeze(1.week.ago - 1.day) { create(:transaction) }
+
+        transactions = Transaction.since(1.week.ago).all
+
+        expect(transactions.length).to eq(2)
+        expect(transactions).to include(t1, t2)
+      end
+    end
+  end
+
+  describe 'currency' do
+    it 'only returns transactions for the given currency' do
+      usd_trans = create(:transaction, amount: Money.from_amount(1, :usd))
+      eur_trans = create(:transaction, amount: Money.from_amount(1, :eur))
+
+      transactions = Transaction.currency(:eur)
+
+      expect(transactions.count).to eq(1)
+      expect(transactions.first.amount_currency).to eq('EUR')
+    end
+
+    it 'handles string or symbol parameters' do
+      usd_trans = create(:transaction, amount: Money.from_amount(1, :usd))
+      eur_trans = create(:transaction, amount: Money.from_amount(1, :eur))
+
+      [:eur, 'eur', :EUR, 'EUR'].each do |currency|
+        transactions = Transaction.currency(currency)
+
+        expect(transactions.count).to eq(1)
+        expect(transactions.first.amount_currency).to eq('EUR')
+      end
+    end
+  end
 end
