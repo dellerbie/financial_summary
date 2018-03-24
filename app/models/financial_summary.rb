@@ -33,9 +33,9 @@ class FinancialSummary
   private
 
   def transactions_for(category:)
-    category_transactions = user.transactions.category(category).currency(currency)
+    transactions = user.transactions.category(category).currency(currency)
 
-    return category_transactions unless since
-    return category_transactions.since(since)
+    return transactions unless since
+    return transactions.since(since)
   end
 end
